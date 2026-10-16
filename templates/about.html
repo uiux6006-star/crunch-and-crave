@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Our Story — Crunch &amp; Crave{% endblock %}
+
+{% block content %}
+
+<section class="page-hero">
+    <div class="page-hero-bg">
+        <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1800&q=80" alt="">
+    </div>
+    <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a href="{% url 'home' %}">Home</a><i class="fa-solid fa-chevron-right"></i><span>About</span>
+        </nav>
+        <h1 class="display">Great food. <em>Great moments.</em></h1>
+        <p class="lead">From a simple idea to a neighbourhood favourite — this is the story behind every crispy bite.</p>
+    </div>
+</section>
+
+
+<section class="section-tight" style="padding-top:0">
+    <div class="container">
+        <div class="stats" data-reveal>
+            <div class="stat"><strong><span data-count-up="10">10</span>+</strong><span>Years of flavour</span></div>
+            <div class="stat"><strong data-count-up="{{ product_total }}">{{ product_total }}</strong><span>Dishes on the menu</span></div>
+            <div class="stat"><strong><span data-count-up="{{ review_stats.average|default:'4.9' }}">{{ review_stats.average|default:"4.9" }}</span>★</strong><span>Average rating</span></div>
+            <div class="stat"><strong>{{ site.delivery_time }}</strong><span>Average delivery</span></div>
+        </div>
+    </div>
+</section>
+
+
+<section class="section">
+    <div class="container split">
+        <div class="split-media" data-reveal>
+            <img src="https://images.unsplash.com/photo-1571091718767-18b5b1457add?auto=format&fit=crop&w=1000&q=85" alt="Our signature zinger burger" loading="lazy">
+            <img class="inset-img" src="https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=600&q=85" alt="" loading="lazy">
+        </div>
+        <div class="split-copy" data-reveal style="--d:.1s">
+            <span class="eyebrow">Our story</span>
+            <h2 class="h2">More than food — <em>it's an experience.</em></h2>
+            <p class="lead">Crunch &amp; Crave started with one belief: fast food can be fresh, generous and made with real care. No shortcuts, no frozen patties, no compromises.</p>
+            <p class="muted">Today our kitchen serves burgers, pizzas, shawarmas, parathas and more — each one built around signature sauces we still make in-house every morning. The recipes have grown, but the promise hasn't changed: every order should taste like it was made just for you. Because it was.</p>
+            <div><a href="{% url 'menu' %}" class="btn btn-primary">See the menu <i class="fa-solid fa-arrow-right"></i></a></div>
+        </div>
+    </div>
+</section>
+
+
+<section class="section section-alt">
+    <div class="container">
+        <div class="section-head center" data-reveal>
+            <span class="eyebrow">What we stand for</span>
+            <h2 class="h2">Quality you can <em>taste.</em></h2>
+        </div>
+        <div class="card-grid">
+            <div class="v-card" data-reveal><span class="num">01</span><span class="feature-icon"><i class="fa-solid fa-leaf"></i></span><h3>Fresh, every day</h3><p>Vegetables and chicken arrive fresh each morning and are prepped in-house.</p></div>
+            <div class="v-card" data-reveal><span class="num">02</span><span class="feature-icon"><i class="fa-solid fa-flask"></i></span><h3>Signature sauces</h3><p>Our Crave sauces are made from our own recipes — you won't find them anywhere else.</p></div>
+            <div class="v-card" data-reveal><span class="num">03</span><span class="feature-icon"><i class="fa-solid fa-shield-heart"></i></span><h3>Spotless kitchen</h3><p>Strict hygiene standards, gloves on, surfaces sanitised throughout the day.</p></div>
+            <div class="v-card" data-reveal><span class="num">04</span><span class="feature-icon"><i class="fa-solid fa-heart"></i></span><h3>Made with love</h3><p>A team that genuinely cares about the food — and about you enjoying it.</p></div>
+        </div>
+    </div>
+</section>
+
+
+<section class="section">
+    <div class="container">
+        <div class="cta" data-reveal>
+            <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=1600&q=80" alt="" loading="lazy">
+            <span class="eyebrow">Come hungry</span>
+            <h2 class="h2">Your next favourite meal <em>is waiting.</em></h2>
+            <div class="hero-actions" style="justify-content:center">
+                <a href="{% url 'menu' %}" class="btn btn-primary">Order Now <i class="fa-solid fa-arrow-right"></i></a>
+                <a href="{% url 'contact' %}" class="btn btn-ghost">Visit us</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

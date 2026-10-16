@@ -1,0 +1,208 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{% block meta_description %}Crunch &amp; Crave — fresh, crispy and delicious burgers, pizza, shawarma and more, delivered hot in {{ site.delivery_time }}.{% endblock %}">
+    <meta name="theme-color" content="#0c0a09">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+
+    <title>{% block title %}Crunch &amp; Crave — Taste That Hits Different{% endblock %}</title>
+
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/logo-mark.svg' %}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://images.unsplash.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/nj.css' %}">
+
+    <script>document.documentElement.classList.add("js");</script>
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body{% if demo_mode %} class="has-demo"{% endif %}>
+
+<a class="sr-only" href="#main">Skip to content</a>
+
+{% if demo_mode %}
+<div class="demo-bar" role="note">
+    <i class="fa-solid fa-flask"></i>
+    <span><strong>Portfolio demo</strong><span class="demo-bar-long"> — orders, payments &amp; reviews here are not real. Please don't send money.</span><span class="demo-bar-short"> · Orders aren't real</span></span>
+</div>
+{% endif %}
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="header" id="header">
+    <div class="container">
+
+        {% include "partials/logo.html" %}
+
+        <nav class="nav" id="nav" aria-label="Main">
+            <a href="{% url 'home' %}" data-nav>Home</a>
+            <a href="{% url 'menu' %}" data-nav>Menu</a>
+            <a href="{% url 'offers' %}" data-nav>Offers</a>
+            <a href="{% url 'about' %}" data-nav>About</a>
+            <a href="{% url 'gallery' %}" data-nav>Gallery</a>
+            <a href="{% url 'reviews' %}" data-nav>Reviews</a>
+            <a href="{% url 'contact' %}" data-nav>Contact</a>
+
+            <div class="nav-mobile-extra">
+                <a href="{% url 'track_order' %}" class="btn btn-ghost btn-block">
+                    <i class="fa-solid fa-location-arrow"></i> Track Order
+                </a>
+                <a href="{% url 'menu' %}" class="btn btn-primary btn-block">
+                    Order Now <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </nav>
+        <div class="nav-backdrop"></div>
+
+        <div class="header-actions">
+            <button type="button" class="icon-btn" data-search-open aria-label="Search the menu">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+
+            <a href="{% url 'cart' %}" class="icon-btn cart-btn" aria-label="Cart">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <span class="cart-badge" data-cart-count data-count="{{ cart_count }}">{{ cart_count }}</span>
+            </a>
+
+            <a href="{% url 'menu' %}" class="btn btn-primary btn-sm btn-order">
+                Order Now <i class="fa-solid fa-arrow-right"></i>
+            </a>
+
+            <button type="button" class="icon-btn menu-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="nav">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+
+    </div>
+</header>
+
+
+<!-- =========================================================
+     SEARCH OVERLAY
+========================================================= -->
+
+<div class="search-overlay" id="search" aria-hidden="true">
+    <button type="button" class="icon-btn search-close" data-search-close aria-label="Close search">
+        <i class="fa-solid fa-xmark"></i>
+    </button>
+
+    <form action="{% url 'menu' %}" method="get" role="search">
+        <label for="searchInput">What are you craving?</label>
+        <div class="search-field">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="search" id="searchInput" name="search" placeholder="Zinger, pizza, shake…" autocomplete="off">
+        </div>
+        <div class="search-tags">
+            {% for category in nav_categories %}
+            <a class="chip" href="{% url 'menu' %}?category={{ category.slug }}">{{ category.name }}</a>
+            {% endfor %}
+        </div>
+    </form>
+</div>
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main id="main">
+    {% block content %}{% endblock %}
+</main>
+
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
+<footer class="footer">
+    <div class="container footer-grid">
+
+        <div class="footer-brand">
+            {% include "partials/logo.html" %}
+            <p>Fresh ingredients. Bold flavors. Unforgettable moments — cooked the moment you order.</p>
+            <div class="socials">
+                <a class="icon-btn" href="{{ site.facebook }}" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                <a class="icon-btn" href="{{ site.instagram }}" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <a class="icon-btn" href="{{ site.tiktok }}" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                <a class="icon-btn" href="https://wa.me/{{ site.whatsapp }}" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+            </div>
+        </div>
+
+        <div>
+            <h4>Explore</h4>
+            <ul class="footer-links">
+                <li><a href="{% url 'menu' %}">Full Menu</a></li>
+                <li><a href="{% url 'offers' %}">Deals &amp; Offers</a></li>
+                <li><a href="{% url 'about' %}">Our Story</a></li>
+                <li><a href="{% url 'reviews' %}">Reviews</a></li>
+                <li><a href="{% url 'track_order' %}">Track Order</a></li>
+            </ul>
+        </div>
+
+        <div>
+            <h4>Menu</h4>
+            <ul class="footer-links">
+                {% for category in nav_categories|slice:":6" %}
+                <li><a href="{% url 'menu' %}?category={{ category.slug }}">{{ category.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div>
+            <h4>Visit &amp; Contact</h4>
+            <ul class="footer-contact">
+                <li><i class="fa-solid fa-location-dot"></i><span>{{ site.address }}</span></li>
+                <li><i class="fa-solid fa-phone"></i><a href="tel:{{ site.phone_link }}">{{ site.phone }}</a></li>
+                <li><i class="fa-solid fa-envelope"></i><a href="mailto:{{ site.email }}">{{ site.email }}</a></li>
+                <li><i class="fa-solid fa-clock"></i><span>{{ site.hours }}</span></li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+        <div class="container">
+            <p>© {% now "Y" %} <strong>Crunch &amp; Crave</strong>. All rights reserved.</p>
+            <p class="footer-legal">
+                <a href="{% url 'privacy' %}">Privacy Policy</a>
+                <a href="{% url 'terms' %}">Terms &amp; Conditions</a>
+            </p>
+        </div>
+    </div>
+</footer>
+
+
+<!-- =========================================================
+     FLOATING UI
+========================================================= -->
+
+<a href="https://wa.me/{{ site.whatsapp }}" class="wa-float" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+    <i class="fa-brands fa-whatsapp"></i>
+</a>
+
+<button type="button" class="icon-btn to-top" id="toTop" aria-label="Back to top">
+    <i class="fa-solid fa-arrow-up"></i>
+</button>
+
+<div class="toast-stack" id="toasts" aria-live="polite">
+    {% for message in messages %}
+    <div class="toast {{ message.tags }}" role="status">
+        <span class="t-icon"><i class="fa-solid {% if message.tags == 'error' %}fa-circle-exclamation{% elif message.tags == 'success' %}fa-circle-check{% else %}fa-bell{% endif %}"></i></span>
+        <span>{{ message }}</span>
+    </div>
+    {% endfor %}
+</div>
+
+<script src="{% static 'js/nj.js' %}" defer></script>
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>

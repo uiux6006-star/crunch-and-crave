@@ -1,0 +1,55 @@
+<div class="panel" style="display:grid;gap:28px">
+
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+        <div>
+            <p class="label-sm" style="margin:0">Order #{{ order.order_number }}</p>
+            <p class="muted" style="font-size:13px">Placed {{ order.created_at|date:"d M Y, g:i A" }}</p>
+        </div>
+        <span class="status-pill{% if order.status == 'cancelled' %} is-cancelled{% elif order.status == 'delivered' %} is-delivered{% endif %}">
+            <i class="fa-solid fa-circle" style="font-size:7px"></i> {{ order.get_status_display }}
+        </span>
+    </div>
+
+    {% if order.tracking_steps %}
+    <ol class="timeline" aria-label="Order progress">
+        {% for step in order.tracking_steps %}
+        <li class="timeline-step{% if step.done %} is-done{% endif %}{% if step.current %} is-current{% endif %}"{% if step.current %} aria-current="step"{% endif %}>
+            <span class="dot">
+                {% if forloop.counter == 1 %}<i class="fa-solid fa-receipt"></i>{% elif forloop.counter == 2 %}<i class="fa-solid fa-thumbs-up"></i>{% elif forloop.counter == 3 %}<i class="fa-solid fa-fire-burner"></i>{% elif forloop.counter == 4 %}<i class="fa-solid fa-motorcycle"></i>{% else %}<i class="fa-solid fa-house"></i>{% endif %}
+            </span>
+            {{ step.label }}
+        </li>
+        {% endfor %}
+    </ol>
+    {% else %}
+    <p class="muted">This order was cancelled. Questions? Call us on <a href="tel:{{ site.phone_link }}" style="color:var(--accent-2)">{{ site.phone }}</a>.</p>
+    {% endif %}
+
+    <div class="mini-lines" style="max-height:none">
+        {% for item in order.items.all %}
+        <div class="mini-line" style="grid-template-columns:1fr auto">
+            <div><strong>{{ item.product_name }}</strong><span>{{ item.quantity }} × Rs. {{ item.unit_price|intcomma }}</span></div>
+            <strong>Rs. {{ item.line_total|intcomma }}</strong>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="summary-rows" style="padding-top:18px;border-top:1px solid var(--line)">
+        <div><span>Subtotal</span><strong>Rs. {{ order.subtotal|intcomma }}</strong></div>
+        <div><span>Delivery</span><strong>{% if order.delivery_fee %}Rs. {{ order.delivery_fee|intcomma }}{% else %}FREE{% endif %}</strong></div>
+        {% if order.discount %}<div class="discount"><span>Discount <small class="muted">{{ order.promo_code }}</small></span><strong>− Rs. {{ order.discount|intcomma }}</strong></div>{% endif %}
+    </div>
+
+    <div class="summary-total">
+        <span>{{ order.get_payment_method_display }} · <b style="color:{% if order.payment_status == 'paid' %}var(--success){% elif order.payment_status == 'rejected' %}var(--danger){% else %}var(--gold){% endif %}">{{ order.get_payment_status_display }}</b></span>
+        <strong>Rs. {{ order.total|intcomma }}</strong>
+    </div>
+
+    <div class="kv" style="padding-top:22px;border-top:1px solid var(--line)">
+        <div><span>Deliver to</span><strong>{{ order.full_name }}</strong></div>
+        <div><span>Phone</span><strong>{{ order.phone }}</strong></div>
+        <div style="grid-column:1/-1"><span>Address</span><strong>{{ order.address }}, {{ order.area }}, {{ order.city }}</strong></div>
+        {% if order.notes %}<div style="grid-column:1/-1"><span>Notes</span><strong>{{ order.notes }}</strong></div>{% endif %}
+    </div>
+
+</div>

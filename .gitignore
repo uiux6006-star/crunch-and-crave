@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+
+# Secrets — never commit
+.env
+
+# Local data (the server builds its own database with migrate)
+db.sqlite3
+db.*.sqlite3
+*.sqlite3-journal
+
+# Generated / uploaded files
+staticfiles/
+media/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

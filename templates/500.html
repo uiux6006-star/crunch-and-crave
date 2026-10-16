@@ -1,0 +1,29 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Something went wrong — Crunch &amp; Crave</title>
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/logo-mark.svg' %}">
+    {# Self-contained on purpose: this page must work even if the database or templates fail. #}
+    <style>
+        body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px;
+               background: radial-gradient(60% 60% at 50% 30%, rgba(255,106,31,.18), transparent 70%), #0c0a09;
+               color: #f7f0e7; font-family: Georgia, serif; text-align: center; }
+        img { width: 72px; height: 72px; }
+        h1 { font-size: clamp(32px, 6vw, 56px); margin: 24px 0 8px; letter-spacing: -.02em; }
+        h1 em { color: #ff6a1f; }
+        p { font-family: system-ui, sans-serif; color: #d6cbbf; max-width: 42ch; margin: 0 auto 28px; line-height: 1.6; }
+        a { display: inline-block; padding: 14px 28px; border-radius: 999px; background: #ff5a14; color: #fff;
+            font-family: system-ui, sans-serif; font-weight: 700; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <main>
+        <img src="{% static 'img/logo-mark.svg' %}" alt="Crunch &amp; Crave">
+        <h1>Our kitchen <em>slipped up.</em></h1>
+        <p>Something went wrong on our side. Please try again in a moment — we're already looking into it.</p>
+        <a href="/">Back to home</a>
+    </main>
+</body>
+</html>

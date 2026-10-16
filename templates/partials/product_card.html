@@ -1,0 +1,30 @@
+<article class="p-card" data-item data-category="{{ product.category.slug }}" data-search="{{ product.name|lower }} {{ product.category.name|lower }} {{ product.ingredients|lower }} {{ product.description|lower }}"{% if reveal %} data-reveal style="--d: {{ delay|default:0 }}s"{% endif %}>
+    <a href="{{ product.get_absolute_url }}" class="p-card-media" tabindex="-1" aria-hidden="true">
+        <img src="{{ product.image_url }}" alt="" loading="lazy" width="600" height="480">
+    </a>
+
+    <div class="p-card-tags">
+        {% if product.badge %}<span class="badge {% if product.badge == 'Best Seller' or product.badge == 'Mega Deal' %}badge-gold{% endif %}">{{ product.badge }}</span>{% else %}<span></span>{% endif %}
+        {% if product.has_discount %}<span class="badge badge-accent">−{{ product.discount_percent }}%</span>{% endif %}
+    </div>
+
+    <div class="p-card-body">
+        <div class="p-card-meta">
+            <span class="cat">{{ product.category.name }}</span>
+            <span class="rating"><i class="fa-solid fa-star"></i>{{ product.rating }} <span class="muted">({{ product.review_count }})</span></span>
+        </div>
+
+        <h3><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h3>
+        <p>{{ product.description }}</p>
+
+        <div class="p-card-foot">
+            <div class="price">
+                <strong><small>Rs.</small>{{ product.price|intcomma }}</strong>
+                {% if product.has_discount %}<del>{{ product.old_price|intcomma }}</del>{% endif %}
+            </div>
+            <button type="button" class="add-btn" data-add="{{ product.slug }}" aria-label="Add {{ product.name }} to cart">
+                <i class="fa-solid fa-plus"></i><span data-label>Add</span>
+            </button>
+        </div>
+    </div>
+</article>

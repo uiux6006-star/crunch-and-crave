@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Order #{{ order.order_number }} confirmed — Crunch &amp; Crave{% endblock %}
+
+{% block content %}
+
+<section class="pd">
+    <div class="container receipt">
+
+        <div style="display:grid;gap:18px;justify-items:center;text-align:center">
+            <span class="success-mark"><i class="fa-solid fa-check"></i></span>
+            <span class="order-no"><i class="fa-solid fa-receipt"></i> ORDER #{{ order.order_number }}</span>
+            <h1 class="h2">Thank you, <em>{{ order.full_name|truncatewords:1 }}</em></h1>
+            <p class="lead" style="margin-inline:auto">Your order is in! We'll call <strong>{{ order.phone }}</strong> to confirm, and it should reach you in about {{ site.delivery_time }}.</p>
+        </div>
+
+        {% if order.payment_status == "awaiting" %}
+        <div class="form-alert is-info" role="status">
+            <i class="fa-solid fa-hourglass-half"></i>
+            <div><p><strong>Payment being verified.</strong> We received your {{ order.get_payment_method_display }} transaction ID <strong>{{ order.payment_reference }}</strong> and will confirm it shortly.</p></div>
+        </div>
+        {% endif %}
+
+        <a href="{{ whatsapp_url }}" target="_blank" rel="noopener" class="wa-cta">
+            <i class="fa-brands fa-whatsapp"></i>
+            <span><strong>Send order on WhatsApp</strong><small>Get faster confirmation — your order details are already typed in</small></span>
+            <i class="fa-solid fa-arrow-right"></i>
+        </a>
+
+        {% include "partials/order_status.html" %}
+
+        <div class="hero-actions" style="justify-content:center">
+            <a href="{% url 'track_order' %}?order_number={{ order.order_number }}&phone={{ order.phone|urlencode }}" class="btn btn-primary"><i class="fa-solid fa-location-arrow"></i> Track this order</a>
+            <a href="{% url 'menu' %}" class="btn btn-ghost">Back to menu</a>
+        </div>
+
+        <p class="muted" style="text-align:center;font-size:14px">Save your order number <strong style="color:var(--gold)">#{{ order.order_number }}</strong> — you'll need it with your phone number to track the order.</p>
+
+    </div>
+</section>
+
+{% endblock %}

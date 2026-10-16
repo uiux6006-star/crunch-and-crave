@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Menu — Crunch &amp; Crave{% endblock %}
+
+{% block content %}
+
+<section class="page-hero">
+    <div class="page-hero-bg">
+        <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=1800&q=80" alt="">
+    </div>
+    <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a href="{% url 'home' %}">Home</a><i class="fa-solid fa-chevron-right"></i><span>Menu</span>
+        </nav>
+        <h1 class="display">Our <em>menu.</em></h1>
+        <p class="lead">Fresh ingredients, bold flavours and something for every craving — tap <b>Add</b> on anything to drop it straight into your bag.</p>
+    </div>
+</section>
+
+
+<section class="section-tight" style="padding-top:0">
+    <div class="container" data-filter-scope data-initial="{{ active_category|default:'all' }}">
+
+        <div class="menu-toolbar">
+            <div class="chip-row" role="toolbar" aria-label="Filter by category">
+                <button type="button" class="chip" data-filter="all">All <small>{{ products|length }}</small></button>
+                {% for category in categories %}
+                <button type="button" class="chip" data-filter="{{ category.slug }}">{{ category.name }}</button>
+                {% endfor %}
+            </div>
+            <label class="menu-search">
+                <span class="sr-only">Search the menu</span>
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="search" data-filter-search placeholder="Search dishes…" value="{{ query }}" autocomplete="off">
+            </label>
+        </div>
+
+        {% if query %}
+        <p class="muted" style="margin-bottom:28px">Showing results for “<strong style="color:var(--text)">{{ query }}</strong>” · <a class="link-arrow" href="{% url 'menu' %}">Clear search</a></p>
+        {% endif %}
+
+        {% regroup products by category as grouped %}
+        {% for group in grouped %}
+        <section class="menu-group" data-group id="{{ group.grouper.slug }}">
+            <header class="menu-group-head">
+                <h2>{{ group.grouper.name }}</h2>
+                <span>{{ group.grouper.tagline }} · {{ group.list|length }} item{{ group.list|length|pluralize }}</span>
+            </header>
+            <div class="product-grid">
+                {% for product in group.list %}
+                {% include "partials/product_card.html" %}
+                {% endfor %}
+            </div>
+        </section>
+        {% endfor %}
+
+        <div class="empty-state" data-empty hidden>
+            <span class="empty-icon"><i class="fa-solid fa-bowl-food"></i></span>
+            <h2 class="h3">Nothing matches that craving</h2>
+            <p class="muted">Try a different search or browse another category.</p>
+            <a href="{% url 'menu' %}" class="btn btn-ghost btn-sm">Reset filters</a>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

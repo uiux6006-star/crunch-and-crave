@@ -1,0 +1,12 @@
+<div class="field{% if full %} full{% endif %}{% if field.errors %} has-error{% endif %}">
+    <label for="{{ field.id_for_label }}">{{ label }}{% if required %} <b>*</b>{% endif %}{% if optional %}<em>Optional</em>{% endif %}</label>
+    {% if textarea %}
+    <textarea id="{{ field.id_for_label }}" name="{{ field.html_name }}" placeholder="{{ placeholder }}" rows="{% if counter %}3{% else %}4{% endif %}"{% if required %} required{% endif %}{% if counter %} maxlength="{{ counter }}" data-counter="#{{ field.id_for_label }}Count"{% endif %}{% if auto %} autocomplete="{{ auto }}"{% endif %}>{{ field.value|default_if_none:"" }}</textarea>
+    {% elif select %}
+    {{ field }}
+    {% else %}
+    <input type="{{ type|default:'text' }}" id="{{ field.id_for_label }}" name="{{ field.html_name }}" value="{{ field.value|default_if_none:'' }}" placeholder="{{ placeholder }}"{% if required %} required{% endif %}{% if field.field.max_length %} maxlength="{{ field.field.max_length }}"{% endif %}{% if auto %} autocomplete="{{ auto }}"{% endif %}>
+    {% endif %}
+    {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+    {% if counter %}<span class="field-hint"><span id="{{ field.id_for_label }}Count">0</span>/{{ counter }}</span>{% endif %}
+</div>

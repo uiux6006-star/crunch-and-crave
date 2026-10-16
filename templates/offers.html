@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Deals & Offers — Crunch &amp; Crave{% endblock %}
+
+{% block content %}
+
+<section class="page-hero">
+    <div class="page-hero-bg">
+        <img src="https://images.unsplash.com/photo-1550317138-10000687a72b?auto=format&fit=crop&w=1800&q=80" alt="">
+    </div>
+    <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a href="{% url 'home' %}">Home</a><i class="fa-solid fa-chevron-right"></i><span>Offers</span>
+        </nav>
+        <h1 class="display">Big flavour. <em>Better deals.</em></h1>
+        <p class="lead">Hand-picked favourites at their best prices, plus promo codes that stack up the savings.</p>
+    </div>
+</section>
+
+
+{% if promo_codes %}
+<section class="section-tight" style="padding-top:0">
+    <div class="container card-grid">
+        {% for promo in promo_codes %}
+        <div class="v-card" data-reveal style="background:radial-gradient(80% 80% at 100% 0%, rgba(224,176,97,.14), transparent 70%), var(--surface)">
+            <span class="num">%</span>
+            <span class="eyebrow">Promo code</span>
+            <h3 style="font-size:34px;letter-spacing:.06em;color:var(--gold)">{{ promo.code }}</h3>
+            <p>{{ promo.description|default:"" }}{% if promo.max_discount %} · max Rs. {{ promo.max_discount|intcomma }} off{% endif %}</p>
+            <p style="font-size:13px">Apply it in your cart before checkout.</p>
+        </div>
+        {% endfor %}
+        <div class="v-card" data-reveal>
+            <span class="num"><i class="fa-solid fa-truck"></i></span>
+            <span class="eyebrow">Always on</span>
+            <h3>Free delivery</h3>
+            <p>On every order above Rs. 1,500 — no code needed.</p>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+
+<section class="section section-alt">
+    <div class="container">
+        <div class="section-head" data-reveal>
+            <div>
+                <span class="eyebrow">Today's best offers</span>
+                <h2 class="h2">Deals worth <em>craving.</em></h2>
+            </div>
+            <a href="{% url 'menu' %}" class="link-arrow">Full menu <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <div class="product-grid">
+            {% for product in offers_products %}{% include "partials/product_card.html" with reveal=True %}{% empty %}
+            <p class="muted">No offers running right now — check back soon!</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+
+<section class="section">
+    <div class="container">
+        <div class="section-head center" data-reveal>
+            <span class="eyebrow">Deals you can trust</span>
+            <h2 class="h2">No catches. <em>Just savings.</em></h2>
+        </div>
+        <div class="card-grid">
+            <div class="v-card" data-reveal><span class="num">01</span><span class="feature-icon"><i class="fa-solid fa-tags"></i></span><h3>Real discounts</h3><p>Prices shown are what you pay — no hidden charges at checkout.</p></div>
+            <div class="v-card" data-reveal><span class="num">02</span><span class="feature-icon"><i class="fa-solid fa-scale-balanced"></i></span><h3>Same portions</h3><p>Deal items are full-size. We never shrink a meal to discount it.</p></div>
+            <div class="v-card" data-reveal><span class="num">03</span><span class="feature-icon"><i class="fa-solid fa-fire"></i></span><h3>Cooked fresh</h3><p>Every deal is made to order, just like everything else we serve.</p></div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

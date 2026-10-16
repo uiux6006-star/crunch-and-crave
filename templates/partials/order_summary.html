@@ -1,0 +1,57 @@
+<aside class="summary">
+    <h2>Order summary</h2>
+
+    {% if not editable %}
+    <div class="mini-lines">
+        {% for line in summary.lines %}
+        <div class="mini-line">
+            <img src="{{ line.product.image_url }}" alt="" loading="lazy">
+            <div><strong>{{ line.product.name }}</strong><span>{{ line.quantity }} × Rs. {{ line.product.price|intcomma }}</span></div>
+            <strong>Rs. {{ line.total|intcomma }}</strong>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="free-delivery">
+        <span data-free-msg {% if not summary.free_delivery_remaining %}hidden{% endif %}>Add <b data-summary="remaining">Rs. {{ summary.free_delivery_remaining|intcomma }}</b> more for <b>free delivery</b></span>
+        <span data-free-done {% if summary.free_delivery_remaining %}hidden{% endif %}><i class="fa-solid fa-circle-check" style="color:var(--success)"></i> You've unlocked <b>free delivery!</b></span>
+        <div class="progress"><div data-summary="progress" style="width: {{ summary.free_delivery_progress }}%"></div></div>
+    </div>
+
+    <div class="summary-rows">
+        <div><span>Subtotal</span><strong data-summary="subtotal">Rs. {{ summary.subtotal|intcomma }}</strong></div>
+        <div><span>Delivery</span><strong data-summary="delivery">{% if summary.delivery_fee %}Rs. {{ summary.delivery_fee|intcomma }}{% else %}FREE{% endif %}</strong></div>
+        <div class="discount" data-summary-row="discount" {% if not summary.discount %}hidden{% endif %}>
+            <span>Discount <small class="muted" data-summary="promo-code">{{ summary.promo.code }}</small></span>
+            <strong data-summary="discount">− Rs. {{ summary.discount|intcomma }}</strong>
+        </div>
+    </div>
+
+    {% if editable %}
+    <form class="promo-form" id="promoForm">
+        <label class="sr-only" for="promoCode">Promo code</label>
+        <input id="promoCode" name="code" placeholder="Promo code" value="{{ summary.promo.code|default:'' }}" autocomplete="off">
+        <button type="submit" class="btn btn-ghost">Apply</button>
+    </form>
+    {% endif %}
+
+    <div class="summary-total">
+        <span>Total</span>
+        <strong data-summary="total">Rs. {{ summary.total|intcomma }}</strong>
+    </div>
+
+    {% if editable %}
+    <a href="{% url 'checkout' %}" class="btn btn-primary btn-block">Proceed to checkout <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="{% url 'menu' %}" class="btn btn-ghost btn-block btn-sm">Continue shopping</a>
+    {% else %}
+    <button type="submit" form="checkoutForm" class="btn btn-primary btn-block">Place order · <span data-summary="total">Rs. {{ summary.total|intcomma }}</span></button>
+    <a href="{% url 'cart' %}" class="btn btn-ghost btn-block btn-sm"><i class="fa-solid fa-arrow-left"></i> Edit cart</a>
+    {% endif %}
+
+    <div class="trust-row">
+        <span><i class="fa-solid fa-lock"></i>Secure</span>
+        <span><i class="fa-solid fa-circle-check"></i>Fresh</span>
+        <span><i class="fa-solid fa-circle-check"></i>On time</span>
+    </div>
+</aside>

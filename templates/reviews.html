@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Reviews — Crunch &amp; Crave{% endblock %}
+
+{% block content %}
+
+<section class="page-hero">
+    <div class="page-hero-bg">
+        <img src="https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=1800&q=80" alt="">
+    </div>
+    <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a href="{% url 'home' %}">Home</a><i class="fa-solid fa-chevron-right"></i><span>Reviews</span>
+        </nav>
+        <h1 class="display">Loved by <em>food lovers.</em></h1>
+        <p class="lead">Real words from real customers. Tried something recently? We'd love to hear about it.</p>
+    </div>
+</section>
+
+
+<section class="section-tight" style="padding-top:0">
+    <div class="container">
+        <div class="rating-summary" data-reveal>
+            <div class="rating-big">
+                <strong>{{ review_stats.average }}</strong>
+                <span class="stars">{% for i in "12345" %}<i class="fa-solid fa-star"></i>{% endfor %}</span>
+                <span class="muted" style="font-size:14px">{{ review_stats.total }} verified review{{ review_stats.total|pluralize }}</span>
+            </div>
+            <div class="rating-bars">
+                {% for row in review_stats.breakdown %}
+                <div class="rating-bar">
+                    <span>{{ row.stars }} <i class="fa-solid fa-star" style="color:var(--gold)"></i></span>
+                    <div class="track"><div class="fill" style="width: {{ row.percent }}%"></div></div>
+                    <span class="muted">{{ row.count }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="section-tight">
+    <div class="container">
+        <div class="review-grid">
+            {% for review in reviews %}
+            {% include "partials/review_card.html" %}
+            {% empty %}
+            <p class="muted">No reviews yet — be the first!</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+
+<section class="section section-alt" id="write">
+    <div class="container split" style="align-items:start">
+        <div class="split-copy" data-reveal>
+            <span class="eyebrow">Your feedback</span>
+            <h2 class="h2">Tried our food? <em>Tell us about it.</em></h2>
+            <p class="lead">Every review is read by our team. Approved reviews appear on this page — the good ones make our day, and the honest ones make us better.</p>
+        </div>
+
+        <form method="post" action="{% url 'reviews' %}#write" class="panel" novalidate data-loading data-reveal style="--d:.1s">
+            {% csrf_token %}
+            {% include "partials/spam_fields.html" %}
+            <div class="form-grid">
+                <div class="field full{% if form.rating.errors %} has-error{% endif %}">
+                    <span class="label-sm" style="margin:0">Your rating <b style="color:var(--accent)">*</b></span>
+                    <div class="star-input" role="radiogroup" aria-label="Rating">
+                        {% for value in "54321" %}
+                        <input type="radio" id="star{{ value }}" name="rating" value="{{ value }}"{% if form.rating.value|stringformat:"s" == value %} checked{% endif %}>
+                        <label for="star{{ value }}" title="{{ value }} star{{ value|pluralize }}"><i class="fa-solid fa-star"></i><span class="sr-only">{{ value }} stars</span></label>
+                        {% endfor %}
+                    </div>
+                    {% for error in form.rating.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+                </div>
+
+                {% include "partials/field.html" with field=form.name label="Your name" required=True placeholder="e.g. Ahmed K." auto="name" %}
+
+                <div class="field">
+                    <label for="{{ form.product.id_for_label }}">What did you order?<em>Optional</em></label>
+                    {{ form.product }}
+                </div>
+
+                {% include "partials/field.html" with field=form.title label="Headline" optional=True placeholder="Sum it up in a few words" full=True %}
+                {% include "partials/field.html" with field=form.comment label="Your review" required=True placeholder="What did you love? What could be better?" textarea=True full=True %}
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" style="margin-top:22px">Submit review <i class="fa-solid fa-paper-plane"></i></button>
+        </form>
+    </div>
+</section>
+
+{% endblock %}

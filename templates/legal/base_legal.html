@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-hero" style="padding-bottom:40px">
+    <div class="page-hero-bg"></div>
+    <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a href="{% url 'home' %}">Home</a><i class="fa-solid fa-chevron-right"></i><span>{% block legal_title %}{% endblock %}</span>
+        </nav>
+        <h1 class="display">{% block legal_heading %}{% endblock %}</h1>
+        <p class="lead">Last updated: {% block updated %}16 October 2026{% endblock %}</p>
+    </div>
+</section>
+
+<section class="section-tight" style="padding-top:0">
+    <div class="container">
+        <article class="panel legal" data-reveal>
+            {% block legal_body %}{% endblock %}
+            <p class="muted">Questions? Contact us at <a href="mailto:{{ site.email }}">{{ site.email }}</a> or <a href="tel:{{ site.phone_link }}">{{ site.phone }}</a>.</p>
+        </article>
+    </div>
+</section>
+{% endblock %}

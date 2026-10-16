@@ -1,0 +1,55 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | Crunch &amp; Crave Admin{% endblock %}
+
+{# One premium dark theme — Django's light/dark switcher is not used. #}
+{% block dark-mode-vars %}{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<link rel="stylesheet" href="{% static 'njadmin/nj-admin.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<meta name="theme-color" content="#0a0b16">
+<link rel="icon" type="image/svg+xml" href="{% static 'img/logo-mark.svg' %}">
+<script src="{% static 'njadmin/nj-admin.js' %}" defer></script>
+{% endblock %}
+
+{% block branding %}
+<a class="nja-brand" href="{% url 'admin:index' %}">
+    <img class="nja-brand-mark" src="{% static 'img/logo-mark.svg' %}" alt="" width="42" height="42">
+    <span class="nja-brand-text">
+        <strong>Crunch &amp; Crave</strong>
+        <small>Control Center</small>
+    </span>
+</a>
+{% endblock %}
+
+{% block userlinks %}
+<button type="button" class="nja-alert-toggle" data-enable-alerts><i class="fa-solid fa-bell"></i> Alerts</button>
+<a class="nja-view-site" href="/" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square"></i> View site</a>
+{% if user.is_active and user.is_staff %}
+    {% url 'django-admindocs-docroot' as docsroot %}
+    {% if docsroot %}<a href="{{ docsroot }}">Documentation</a> /{% endif %}
+{% endif %}
+{% if user.has_usable_password %}
+<a href="{% url 'admin:password_change' %}"><i class="fa-solid fa-key"></i> Password</a>
+{% endif %}
+<form id="logout-form" method="post" action="{% url 'admin:logout' %}">
+    {% csrf_token %}
+    <button type="submit"><i class="fa-solid fa-right-from-bracket"></i> Log out</button>
+</form>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block footer %}
+<div class="nja-footer">Crunch &amp; Crave · Admin <span>v2</span></div>
+{% endblock %}

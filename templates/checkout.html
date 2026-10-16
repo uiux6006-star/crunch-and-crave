@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout — Crunch &amp; Crave{% endblock %}
+
+{% block content %}
+
+<section class="page-hero" style="padding-bottom:40px">
+    <div class="page-hero-bg"></div>
+    <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a href="{% url 'home' %}">Home</a><i class="fa-solid fa-chevron-right"></i>
+            <a href="{% url 'cart' %}">Cart</a><i class="fa-solid fa-chevron-right"></i><span>Checkout</span>
+        </nav>
+        <h1 class="display">Almost <em>there.</em></h1>
+        <p class="lead">Just a few details and your food goes straight into the kitchen.</p>
+    </div>
+</section>
+
+<section class="section-tight" style="padding-top:0">
+    <div class="container checkout-layout">
+
+        <form method="post" id="checkoutForm" novalidate data-loading>
+            {% csrf_token %}
+            {% include "partials/spam_fields.html" %}
+
+
+            <div class="panel">
+                <div class="panel-head">
+                    <span class="step">1</span>
+                    <div><h2>Your details</h2><p>So we can confirm your order.</p></div>
+                </div>
+                <div class="form-grid">
+                    {% include "partials/field.html" with field=form.full_name label="Full name" required=True placeholder="Enter your full name" auto="name" full=True %}
+                    {% include "partials/field.html" with field=form.phone label="Phone number" required=True placeholder="03XX XXXXXXX" type="tel" auto="tel" %}
+                    {% include "partials/field.html" with field=form.email label="Email" optional=True placeholder="you@example.com" type="email" auto="email" %}
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-head">
+                    <span class="step">2</span>
+                    <div><h2>Delivery address</h2><p>Where should we bring it?</p></div>
+                </div>
+                <div class="form-grid">
+                    {% include "partials/field.html" with field=form.city label="City" required=True placeholder="Your city" auto="address-level2" %}
+                    {% include "partials/field.html" with field=form.area label="Area / Town" required=True placeholder="Area or town" %}
+                    {% include "partials/field.html" with field=form.address label="Complete address" required=True placeholder="House number, street, block, landmark…" textarea=True auto="street-address" full=True %}
+                    {% include "partials/field.html" with field=form.notes label="Order notes" optional=True placeholder="Extra spicy? No onions? Ring the bell twice?" textarea=True full=True counter=300 %}
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-head">
+                    <span class="step">3</span>
+                    <div><h2>Payment</h2><p>Choose how you want to pay.</p></div>
+                </div>
+                {% with selected=form.payment_method.value|default:"cod" %}
+                <div class="pay-grid" data-pay-options>
+                    <label class="pay-option">
+                        <input type="radio" name="payment_method" value="cod"{% if selected == "cod" %} checked{% endif %}>
+                        <span class="feature-icon"><i class="fa-solid fa-money-bill-wave"></i></span>
+                        <div><strong>Cash on Delivery</strong><span>Pay when your order arrives</span></div>
+                    </label>
+                    {% if payment_accounts.jazzcash %}
+                    <label class="pay-option">
+                        <input type="radio" name="payment_method" value="jazzcash"{% if selected == "jazzcash" %} checked{% endif %}>
+                        <span class="feature-icon" style="background:rgba(220,38,38,.14);color:#f87171"><i class="fa-solid fa-mobile-screen-button"></i></span>
+                        <div><strong>JazzCash</strong><span>Send money, then enter the transaction ID</span></div>
+                    </label>
+                    {% endif %}
+                    {% if payment_accounts.easypaisa %}
+                    <label class="pay-option">
+                        <input type="radio" name="payment_method" value="easypaisa"{% if selected == "easypaisa" %} checked{% endif %}>
+                        <span class="feature-icon" style="background:rgba(34,197,94,.14);color:#4ade80"><i class="fa-solid fa-wallet"></i></span>
+                        <div><strong>EasyPaisa</strong><span>Send money, then enter the transaction ID</span></div>
+                    </label>
+                    {% endif %}
+                    {% if payment_accounts.bank %}
+                    <label class="pay-option">
+                        <input type="radio" name="payment_method" value="bank"{% if selected == "bank" %} checked{% endif %}>
+                        <span class="feature-icon" style="background:rgba(96,165,250,.14);color:#93c5fd"><i class="fa-solid fa-building-columns"></i></span>
+                        <div><strong>Bank Transfer</strong><span>IBFT / Raast to our account</span></div>
+                    </label>
+                    {% endif %}
+                </div>
+
+                {% if demo_mode %}
+                <div class="form-alert is-info" role="note" style="margin-top:16px">
+                    <i class="fa-solid fa-flask"></i>
+                    <div><p><strong>This is a portfolio demo.</strong> Please don't send real money — any made-up transaction ID (e.g. <b>DEMO1234</b>) works for trying the flow.</p></div>
+                </div>
+                {% endif %}
+
+                {% for error in form.payment_method.errors %}<p class="field-error" style="margin-top:12px">{{ error }}</p>{% endfor %}
+
+                <div class="pay-details" data-pay-details {% if selected == "cod" %}hidden{% endif %}>
+                    {% for key, account in payment_accounts.items %}
+                    <div class="pay-account" data-pay-account="{{ key }}" {% if selected != key %}hidden{% endif %}>
+                        <p class="label-sm" style="margin-bottom:8px">Send <strong data-summary="total" style="color:var(--accent-2)">Rs. {{ summary.total|intcomma }}</strong> to</p>
+                        <div class="kv">
+                            <div><span>{{ account.title }}{% if account.bank %} · {{ account.bank }}{% endif %}</span><strong class="copyable" data-copy="{{ account.number }}">{{ account.number }} <i class="fa-regular fa-copy"></i></strong></div>
+                            <div><span>Account name</span><strong>{{ account.account_name }}</strong></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    <div class="form-grid" style="margin-top:18px">
+                        {% include "partials/field.html" with field=form.payment_reference label="Transaction ID" required=True placeholder="e.g. 0123456789" full=True %}
+                    </div>
+                    <p class="muted" style="font-size:13px"><i class="fa-solid fa-circle-info"></i> We'll confirm your payment and start cooking right away. The ID is on the SMS / receipt you get after sending.</p>
+                </div>
+                {% endwith %}
+            </div>
+
+            <p class="muted" style="font-size:13px;margin-top:18px;text-align:center">
+                <i class="fa-solid fa-shield-halved"></i> Your details are only used to deliver this order.
+                By placing it you agree to our <a href="{% url 'terms' %}" style="color:var(--accent-2)">Terms</a> and <a href="{% url 'privacy' %}" style="color:var(--accent-2)">Privacy Policy</a>.
+            </p>
+        </form>
+
+        {% include "partials/order_summary.html" %}
+
+    </div>
+</section>
+
+{% endblock %}

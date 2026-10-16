@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- =====================================================
+     HERO
+===================================================== -->
+
+<section class="hero">
+    <div class="hero-bg"></div>
+
+    <div class="container">
+
+        <div class="hero-copy">
+            <span class="hero-pill" data-reveal><b>NEW</b> The Crave Special is back — double cheese, double flavour</span>
+
+            <h1 class="display" data-reveal style="--d:.08s">
+                Taste that<br><em>hits different.</em>
+            </h1>
+
+            <p class="lead" data-reveal style="--d:.16s">
+                Big flavours, crispy bites and unforgettable meals — cooked fresh the moment
+                you order and delivered hot to your door in {{ site.delivery_time }}.
+            </p>
+
+            <div class="hero-actions" data-reveal style="--d:.24s">
+                <a href="{% url 'menu' %}" class="btn btn-primary">Explore Menu <i class="fa-solid fa-arrow-right"></i></a>
+                <a href="{% url 'offers' %}" class="btn btn-ghost"><i class="fa-solid fa-fire"></i> Today's Deals</a>
+            </div>
+
+            <div class="hero-stats" data-reveal style="--d:.32s">
+                <div><strong><span data-count-up="{{ review_stats.average|default:'4.9' }}">{{ review_stats.average|default:"4.9" }}</span><span style="font-size:.5em;color:var(--gold)">★</span></strong><span>Customer rating</span></div>
+                <div><strong>{{ site.delivery_time }}</strong><span>Avg. delivery</span></div>
+                <div><strong data-count-up="{{ product_total }}">{{ product_total }}</strong><span>Menu items</span></div>
+            </div>
+        </div>
+
+        <div class="hero-visual" data-reveal style="--d:.1s">
+            <div class="hero-ring"></div>
+            <div class="hero-plate">
+                <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1100&q=90" alt="Crave Special Burger" width="1100" height="1100" fetchpriority="high">
+            </div>
+
+            <div class="float-card fc-1">
+                <span class="fc-icon"><i class="fa-solid fa-leaf"></i></span>
+                <div><strong>100% Fresh</strong><span>Never frozen</span></div>
+            </div>
+            <div class="float-card fc-2">
+                <span class="fc-icon"><i class="fa-solid fa-truck-fast"></i></span>
+                <div><strong>Free delivery</strong><span>Above Rs. 1,500</span></div>
+            </div>
+            <a href="{% url 'product_detail' 'crave-special-burger' %}" class="float-card fc-price">
+                <div><strong>Crave Special</strong><span>Signature burger</span></div>
+                <span class="price-tag">Rs. 799</span>
+            </a>
+        </div>
+
+    </div>
+
+    <span class="scroll-cue">SCROLL</span>
+</section>
+
+
+<!-- =====================================================
+     MARQUEE
+===================================================== -->
+
+<div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+        {% for _ in "12" %}
+        <span>Crispy Zinger</span><span>Cheesy Pizza</span><span>Loaded Fries</span><span>Garlic Shawarma</span><span>Oreo Shakes</span><span>Flaky Parathas</span>
+        {% endfor %}
+    </div>
+</div>
+
+
+<!-- =====================================================
+     CATEGORIES
+===================================================== -->
+
+<section class="section">
+    <div class="container">
+
+        <div class="section-head" data-reveal>
+            <div>
+                <span class="eyebrow">What are you craving?</span>
+                <h2 class="h2">Choose your <em>favourite.</em></h2>
+            </div>
+            <a href="{% url 'menu' %}" class="link-arrow">View full menu <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <div class="cat-grid">
+            {% for category in categories|slice:":8" %}
+            <a href="{% url 'menu' %}?category={{ category.slug }}" class="cat-card" data-reveal>
+                <img src="{{ category.image_url }}" alt="" loading="lazy">
+                <div class="cat-card-body">
+                    <div>
+                        <small>{{ category.tagline }}</small>
+                        <h3>{{ category.name }}</h3>
+                        <span class="cat-count">{{ category.item_count }} item{{ category.item_count|pluralize }}</span>
+                    </div>
+                    <span class="icon-btn"><i class="fa-solid fa-arrow-right"></i></span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+
+
+<!-- =====================================================
+     FEATURED
+===================================================== -->
+
+<section class="section section-alt">
+    <div class="container">
+
+        <div class="section-head center" data-reveal>
+            <span class="eyebrow">Customer favourites</span>
+            <h2 class="h2">Most loved <em>items.</em></h2>
+            <p class="lead">The dishes our customers keep coming back for — add them to your bag in one tap.</p>
+        </div>
+
+        <div class="product-grid">
+            {% for product in featured %}
+            {% include "partials/product_card.html" with reveal=True %}
+            {% endfor %}
+        </div>
+
+        <div style="display:flex;justify-content:center;margin-top:48px">
+            <a href="{% url 'menu' %}" class="btn btn-ghost">Explore the full menu <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- =====================================================
+     COMBO BANNER
+===================================================== -->
+
+{% if combo %}
+<section class="section">
+    <div class="container">
+        <div class="banner" data-reveal>
+            <div class="banner-copy">
+                <span class="eyebrow"><i class="fa-solid fa-bolt"></i> Limited time offer</span>
+                <h2 class="h2">The perfect <em>combo.</em></h2>
+                <p class="lead">{{ combo.description }}</p>
+                <div class="banner-price">
+                    <strong>Rs. {{ combo.price|intcomma }}</strong>
+                    {% if combo.has_discount %}<del>Rs. {{ combo.old_price|intcomma }}</del>{% endif %}
+                </div>
+                <div class="hero-actions">
+                    <button type="button" class="btn btn-primary" data-add="{{ combo.slug }}"><span data-label>Grab this deal</span> <i class="fa-solid fa-arrow-right"></i></button>
+                    <a href="{% url 'offers' %}" class="btn btn-ghost">All offers</a>
+                </div>
+            </div>
+            <div class="banner-visual">
+                <img src="{{ combo.image_url }}" alt="{{ combo.name }}" loading="lazy">
+                {% if combo.has_discount %}
+                <div class="sticker"><div><span>SAVE</span><strong>{{ combo.discount_percent }}%</strong></div></div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+
+<!-- =====================================================
+     WHY US
+===================================================== -->
+
+<section class="section">
+    <div class="container split">
+
+        <div class="split-media" data-reveal>
+            <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1000&q=85" alt="Freshly baked pizza" loading="lazy">
+            <img class="inset-img" src="https://images.unsplash.com/photo-1571091718767-18b5b1457add?auto=format&fit=crop&w=600&q=85" alt="" loading="lazy">
+            <div class="exp-card"><strong>10+</strong><span>Years of<br>great taste</span></div>
+        </div>
+
+        <div class="split-copy" data-reveal style="--d:.1s">
+            <span class="eyebrow">Why Crunch &amp; Crave</span>
+            <h2 class="h2">We don't just make food. <em>We make memories.</em></h2>
+            <p class="lead">Every ingredient is carefully selected and every meal is prepared with passion — because great fast food should never be ordinary.</p>
+
+            <div class="feature-list">
+                <div class="feature"><span class="feature-icon"><i class="fa-solid fa-leaf"></i></span><div><h4>Fresh ingredients</h4><p>Sourced daily, never frozen.</p></div></div>
+                <div class="feature"><span class="feature-icon"><i class="fa-solid fa-fire-burner"></i></span><div><h4>Made to order</h4><p>Cooked the moment you order.</p></div></div>
+                <div class="feature"><span class="feature-icon"><i class="fa-solid fa-truck-fast"></i></span><div><h4>Fast delivery</h4><p>Hot at your door in {{ site.delivery_time }}.</p></div></div>
+                <div class="feature"><span class="feature-icon"><i class="fa-solid fa-shield-heart"></i></span><div><h4>Hygiene first</h4><p>Spotless kitchen, always.</p></div></div>
+            </div>
+
+            <div><a href="{% url 'about' %}" class="link-arrow">Read our story <i class="fa-solid fa-arrow-right"></i></a></div>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- =====================================================
+     REVIEWS
+===================================================== -->
+
+{% if reviews %}
+<section class="section section-alt">
+    <div class="container">
+
+        <div class="section-head" data-reveal>
+            <div>
+                <span class="eyebrow">Happy customers</span>
+                <h2 class="h2">What they <em>say.</em></h2>
+            </div>
+            <a href="{% url 'reviews' %}" class="link-arrow">All {{ review_stats.total }} reviews <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <div class="review-grid">
+            {% for review in reviews %}
+            {% include "partials/review_card.html" %}
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+{% endif %}
+
+
+<!-- =====================================================
+     CTA
+===================================================== -->
+
+<section class="section">
+    <div class="container">
+        <div class="cta" data-reveal>
+            <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=1600&q=80" alt="" loading="lazy">
+            <span class="eyebrow">Hungry yet?</span>
+            <h2 class="h2">Your next favourite <em>meal awaits.</em></h2>
+            <p class="lead">Free delivery on orders above Rs. 1,500. Use code <strong style="color:var(--gold)">CRAVE10</strong> for 10% off.</p>
+            <a href="{% url 'menu' %}" class="btn btn-primary">Order Now <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Contact — Crunch &amp; Crave{% endblock %}
+
+{% block content %}
+
+<section class="page-hero">
+    <div class="page-hero-bg">
+        <img src="https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=1800&q=80" alt="">
+    </div>
+    <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a href="{% url 'home' %}">Home</a><i class="fa-solid fa-chevron-right"></i><span>Contact</span>
+        </nav>
+        <h1 class="display">Let's <em>talk.</em></h1>
+        <p class="lead">Questions, catering, feedback or a big party order — we usually reply within a few hours.</p>
+    </div>
+</section>
+
+
+<section class="section-tight" style="padding-top:0">
+    <div class="container contact-grid">
+
+        <div class="info-list" data-reveal>
+            <a class="info-card" href="tel:{{ site.phone_link }}">
+                <span class="feature-icon"><i class="fa-solid fa-phone"></i></span>
+                <div><span>Call us</span><strong>{{ site.phone }}</strong></div>
+            </a>
+            <a class="info-card" href="https://wa.me/{{ site.whatsapp }}" target="_blank" rel="noopener">
+                <span class="feature-icon" style="background:rgba(37,211,102,.12);color:#25d366"><i class="fa-brands fa-whatsapp"></i></span>
+                <div><span>WhatsApp</span><strong>Chat with us</strong></div>
+            </a>
+            <a class="info-card" href="mailto:{{ site.email }}">
+                <span class="feature-icon"><i class="fa-solid fa-envelope"></i></span>
+                <div><span>Email</span><strong>{{ site.email }}</strong></div>
+            </a>
+            <div class="info-card">
+                <span class="feature-icon"><i class="fa-solid fa-location-dot"></i></span>
+                <div><span>Visit</span><strong>{{ site.address }}</strong></div>
+            </div>
+            <div class="info-card">
+                <span class="feature-icon"><i class="fa-solid fa-clock"></i></span>
+                <div><span>Open</span><strong>{{ site.hours }}</strong></div>
+            </div>
+            <iframe class="map-frame" title="Map to Crunch &amp; Crave" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                    src="https://maps.google.com/maps?q={{ site.map_query|urlencode }}&z=14&output=embed"></iframe>
+        </div>
+
+        <form method="post" action="{% url 'contact' %}" class="panel" novalidate data-loading data-reveal style="--d:.1s">
+            {% csrf_token %}
+            {% include "partials/spam_fields.html" %}
+            <div class="panel-head">
+                <span class="step"><i class="fa-solid fa-paper-plane" style="font-size:16px"></i></span>
+                <div><h2>Send a message</h2><p>Fill in the form and we'll get back to you soon.</p></div>
+            </div>
+            <div class="form-grid">
+                {% include "partials/field.html" with field=form.name label="Full name" required=True placeholder="Your name" auto="name" %}
+                {% include "partials/field.html" with field=form.email label="Email" required=True placeholder="you@example.com" type="email" auto="email" %}
+                {% include "partials/field.html" with field=form.phone label="Phone" optional=True placeholder="+92 300 1234567" type="tel" auto="tel" %}
+                {% include "partials/field.html" with field=form.subject label="Subject" required=True placeholder="Catering, feedback, order issue…" %}
+                {% include "partials/field.html" with field=form.message label="Message" required=True placeholder="How can we help?" textarea=True full=True %}
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" style="margin-top:22px">Send message <i class="fa-solid fa-arrow-right"></i></button>
+        </form>
+
+    </div>
+</section>
+
+
+<section class="section section-alt">
+    <div class="container">
+        <div class="section-head center" data-reveal>
+            <span class="eyebrow">Good to know</span>
+            <h2 class="h2">Frequently asked <em>questions.</em></h2>
+        </div>
+        <div class="faq" data-reveal>
+            <details open><summary>How long does delivery take?</summary><p>Most orders arrive in about {{ site.delivery_time }}. During peak hours it can take a little longer — you can follow your order live on the <a href="{% url 'track_order' %}" style="color:var(--accent-2)">tracking page</a>.</p></details>
+            <details><summary>Is delivery free?</summary><p>Delivery is free on orders above Rs. 1,500. Below that, a flat Rs. 200 delivery fee applies.</p></details>
+            <details><summary>How can I pay?</summary><p>Cash on delivery is available right now. Online payments (JazzCash, EasyPaisa and cards) are coming soon.</p></details>
+            <details><summary>Do you cater for events?</summary><p>Yes! Send us a message above with your date, headcount and favourite items and we'll put together a custom package.</p></details>
+            <details><summary>Can I customise my order?</summary><p>Absolutely — add any request (extra spicy, no onions, sauce on the side) in the order notes at checkout.</p></details>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "legal/base_legal.html" %}
+
+{% block title %}Terms & Conditions — Crunch &amp; Crave{% endblock %}
+{% block legal_title %}Terms &amp; Conditions{% endblock %}
+{% block legal_heading %}Terms &amp; <em>conditions.</em>{% endblock %}
+
+{% block legal_body %}
+<p>By placing an order on this website you agree to these terms.</p>
+
+<h2>Orders</h2>
+<ul>
+    <li>An order is confirmed once we accept it, usually by phone, SMS or WhatsApp. We may decline an order, for example if the address is outside our delivery area or an item is unavailable.</li>
+    <li>Please check your phone number and address carefully — we cannot be responsible for delays caused by incorrect details.</li>
+    <li>Delivery times (about {{ site.delivery_time }}) are estimates and may be longer during busy hours or bad weather.</li>
+</ul>
+
+<h2>Prices &amp; payment</h2>
+<ul>
+    <li>All prices are in Pakistani Rupees (PKR) and include applicable taxes unless stated otherwise.</li>
+    <li>A delivery fee of Rs. {{ delivery_fee|intcomma }} applies to orders below Rs. {{ free_delivery_threshold|intcomma }}; delivery is free at or above that amount.</li>
+    <li>For JazzCash, EasyPaisa or bank transfer payments, your order is prepared after we verify the transaction ID. If a payment cannot be verified, we will contact you before cancelling.</li>
+    <li>Promo codes cannot be combined, have no cash value, and may be withdrawn at any time.</li>
+</ul>
+
+<h2>Cancellations &amp; refunds</h2>
+<ul>
+    <li>You can cancel free of charge before we start preparing your food — call or WhatsApp us as soon as possible.</li>
+    <li>If an item is missing, wrong or not up to standard, contact us within 2 hours of delivery and we will replace it or refund that item.</li>
+    <li>Approved refunds for online payments are sent back to the same account within 3–5 working days.</li>
+</ul>
+
+<h2>Allergies</h2>
+<p>Our kitchen handles wheat, dairy, eggs, soy, sesame and nuts. If you have an allergy, tell us in the order notes and call us before ordering — we cannot guarantee any item is completely allergen-free.</p>
+
+<h2>Reviews</h2>
+<p>Reviews must be honest and respectful. We may decline to publish reviews containing abusive language, personal information or advertising.</p>
+
+<h2>Changes</h2>
+<p>We may update these terms from time to time. The version on this page applies to your order.</p>
+{% endblock %}

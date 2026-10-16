@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Your Cart — Crunch &amp; Crave{% endblock %}
+
+{% block content %}
+
+<section class="page-hero" style="padding-bottom:40px">
+    <div class="page-hero-bg"></div>
+    <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a href="{% url 'home' %}">Home</a><i class="fa-solid fa-chevron-right"></i><span>Cart</span>
+        </nav>
+        <h1 class="display">Your <em>bag.</em></h1>
+    </div>
+</section>
+
+<section class="section-tight" style="padding-top:0">
+    <div class="container">
+
+        {% if summary.lines %}
+        <div class="checkout-layout">
+
+            <div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+                    <p class="muted"><strong data-summary="count" style="color:var(--text)">{{ summary.count }}</strong> item(s) in your bag</p>
+                    <button type="button" class="remove-btn" id="clearCart"><i class="fa-solid fa-trash-can"></i> Clear cart</button>
+                </div>
+
+                <div class="cart-lines">
+                    {% for line in summary.lines %}
+                    <article class="cart-line" data-slug="{{ line.product.slug }}">
+                        <a href="{{ line.product.get_absolute_url }}"><img src="{{ line.product.image_url }}" alt="{{ line.product.name }}" loading="lazy"></a>
+                        <div class="cart-line-info">
+                            <small>{{ line.product.category.name }}</small>
+                            <h3><a href="{{ line.product.get_absolute_url }}">{{ line.product.name }}</a></h3>
+                            <span class="unit">Rs. {{ line.product.price|intcomma }} each</span>
+                        </div>
+                        <div class="cart-line-actions">
+                            <strong class="cart-line-total" data-line-total>Rs. {{ line.total|intcomma }}</strong>
+                            <div class="qty qty-sm" data-qty>
+                                <button type="button" data-qty-step="-1" aria-label="Decrease quantity"><i class="fa-solid fa-minus"></i></button>
+                                <input type="number" data-qty-value value="{{ line.quantity }}" min="1" max="20" aria-label="Quantity for {{ line.product.name }}" readonly>
+                                <button type="button" data-qty-step="1" aria-label="Increase quantity"><i class="fa-solid fa-plus"></i></button>
+                            </div>
+                            <button type="button" class="remove-btn" data-remove><i class="fa-solid fa-xmark"></i> Remove</button>
+                        </div>
+                    </article>
+                    {% endfor %}
+                </div>
+
+                {% if suggestions %}
+                <div style="margin-top:56px">
+                    <div class="section-head" style="margin-bottom:24px">
+                        <div>
+                            <span class="eyebrow">Complete your meal</span>
+                            <h2 class="h3">Add a side or a drink?</h2>
+                        </div>
+                    </div>
+                    <div class="product-grid">
+                        {% for product in suggestions %}{% include "partials/product_card.html" %}{% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            {% include "partials/order_summary.html" with editable=True %}
+
+        </div>
+
+        {% else %}
+
+        <div class="empty-state panel" style="padding:80px 24px">
+            <span class="empty-icon"><i class="fa-solid fa-bag-shopping"></i></span>
+            <h2 class="h2">Nothing here… <em>yet!</em></h2>
+            <p class="lead" style="margin-inline:auto">Your bag is empty. Let's fix that with something crispy, cheesy and delicious.</p>
+            <a href="{% url 'menu' %}" class="btn btn-primary">Browse the menu <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        {% endif %}
+
+    </div>
+</section>
+
+{% endblock %}

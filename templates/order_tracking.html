@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Track Your Order — Crunch &amp; Crave{% endblock %}
+
+{% block content %}
+
+<section class="page-hero" style="padding-bottom:40px">
+    <div class="page-hero-bg"></div>
+    <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a href="{% url 'home' %}">Home</a><i class="fa-solid fa-chevron-right"></i><span>Track order</span>
+        </nav>
+        <h1 class="display">Where's my <em>food?</em></h1>
+        <p class="lead">Enter your order number and the phone number you ordered with.</p>
+    </div>
+</section>
+
+<section class="section-tight" style="padding-top:0">
+    <div class="container receipt">
+
+        <form method="get" class="panel" style="display:grid;gap:18px">
+            <div class="form-grid">
+                <div class="field">
+                    <label for="order_number">Order number <b>*</b></label>
+                    <input id="order_number" name="order_number" placeholder="e.g. CC1A2B3C" value="{{ form.order_number.value|default_if_none:'' }}" required autocomplete="off" style="text-transform:uppercase">
+                </div>
+                <div class="field">
+                    <label for="phone">Phone number <b>*</b></label>
+                    <input id="phone" type="tel" name="phone" placeholder="03XX XXXXXXX" value="{{ form.phone.value|default_if_none:'' }}" required autocomplete="tel">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-location-arrow"></i> Track order</button>
+        </form>
+
+        {% if order %}
+        {% include "partials/order_status.html" %}
+        {% endif %}
+
+        {% if recent_orders %}
+        <div class="panel">
+            <p class="label-sm">Your recent orders on this device</p>
+            <div class="info-list">
+                {% for recent in recent_orders %}
+                <a class="info-card" href="{% url 'order_success' recent.order_number %}">
+                    <span class="feature-icon"><i class="fa-solid fa-receipt"></i></span>
+                    <div style="flex:1"><span>#{{ recent.order_number }} · {{ recent.created_at|date:"d M, g:i A" }}</span><strong>Rs. {{ recent.total|intcomma }} · {{ recent.get_status_display }}</strong></div>
+                    <i class="fa-solid fa-arrow-right muted"></i>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+</section>
+
+{% endblock %}

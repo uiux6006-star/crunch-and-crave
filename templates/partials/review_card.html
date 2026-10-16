@@ -1,0 +1,15 @@
+<article class="r-card" data-reveal>
+    <span class="stars" aria-label="{{ review.rating }} out of 5 stars">
+        {% for i in "12345" %}<i class="fa-solid fa-star{% if forloop.counter > review.rating %} is-off{% endif %}"></i>{% endfor %}
+    </span>
+    {% if review.title %}<h4>{{ review.title }}</h4>{% endif %}
+    <p>{{ review.comment }}</p>
+    {% if review.product %}<a class="r-product" href="{{ review.product.get_absolute_url }}"><i class="fa-solid fa-utensils"></i> {{ review.product.name }}</a>{% endif %}
+    <div class="r-user">
+        <span class="avatar">{{ review.initial }}</span>
+        <div>
+            <strong>{{ review.name }}</strong>
+            <span>Verified customer · {{ review.created_at|date:"M Y" }}</span>
+        </div>
+    </div>
+</article>

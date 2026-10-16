@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Page not found — Crunch &amp; Crave{% endblock %}
+
+{% block content %}
+<section class="hero" style="min-height:80vh">
+    <div class="hero-bg"></div>
+    <div class="container" style="grid-template-columns:1fr">
+        <div class="empty-state">
+            <span class="empty-icon"><i class="fa-solid fa-burger"></i></span>
+            <h1 class="display">4<em>0</em>4</h1>
+            <p class="lead" style="margin-inline:auto">Looks like this page got eaten. Let's get you back to something delicious.</p>
+            <div class="hero-actions" style="justify-content:center">
+                <a href="{% url 'menu' %}" class="btn btn-primary">Browse the menu <i class="fa-solid fa-arrow-right"></i></a>
+                <a href="{% url 'home' %}" class="btn btn-ghost">Go home</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

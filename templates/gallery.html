@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Gallery — Crunch &amp; Crave{% endblock %}
+
+{% block content %}
+
+<section class="page-hero">
+    <div class="page-hero-bg">
+        <img src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=1800&q=80" alt="">
+    </div>
+    <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a href="{% url 'home' %}">Home</a><i class="fa-solid fa-chevron-right"></i><span>Gallery</span>
+        </nav>
+        <h1 class="display">A taste you <em>can see.</em></h1>
+        <p class="lead">Made to look irresistible — because it is. Tap any dish to see it up close.</p>
+    </div>
+</section>
+
+<section class="section-tight" style="padding-top:0">
+    <div class="container" data-filter-scope>
+
+        <div class="menu-toolbar" style="justify-content:center">
+            <div class="chip-row" role="toolbar" aria-label="Filter gallery" style="flex:0 1 auto">
+                <button type="button" class="chip" data-filter="all">All</button>
+                {% for category in categories %}
+                <button type="button" class="chip" data-filter="{{ category.slug }}">{{ category.name }}</button>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="masonry">
+            {% for item in items %}
+            <figure class="g-item" data-item data-category="{{ item.category.slug }}" data-search="{{ item.name|lower }}" data-full="{{ item.image_url }}" data-title="{{ item.name }}" data-link="{{ item.get_absolute_url }}" tabindex="0" role="button" aria-label="View {{ item.name }}">
+                <img src="{{ item.image_url }}" alt="{{ item.name }}" loading="lazy">
+                <figcaption><small>{{ item.category.name }}</small><strong>{{ item.name }}</strong></figcaption>
+            </figure>
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+
+<div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-label="Image viewer">
+    <button type="button" class="icon-btn lb-close" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+    <button type="button" class="icon-btn lb-prev" aria-label="Previous"><i class="fa-solid fa-chevron-left"></i></button>
+    <figure>
+        <img src="" alt="">
+        <figcaption><span data-lb-title></span><a data-lb-link href="#" class="btn btn-primary btn-sm">Order this <i class="fa-solid fa-arrow-right"></i></a></figcaption>
+    </figure>
+    <button type="button" class="icon-btn lb-next" aria-label="Next"><i class="fa-solid fa-chevron-right"></i></button>
+</div>
+
+{% endblock %}

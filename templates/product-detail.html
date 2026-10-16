@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} — Crunch &amp; Crave{% endblock %}
+{% block meta_description %}{{ product.description }}{% endblock %}
+
+{% block content %}
+
+<section class="pd">
+    <div class="container">
+
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a href="{% url 'home' %}">Home</a><i class="fa-solid fa-chevron-right"></i>
+            <a href="{% url 'menu' %}">Menu</a><i class="fa-solid fa-chevron-right"></i>
+            <a href="{% url 'menu' %}?category={{ product.category.slug }}">{{ product.category.name }}</a><i class="fa-solid fa-chevron-right"></i>
+            <span>{{ product.name }}</span>
+        </nav>
+
+        <div class="pd-grid">
+
+            <div class="pd-media" data-reveal>
+                <img src="{{ product.image_url }}" alt="{{ product.name }}" width="900" height="900">
+                <div class="p-card-tags">
+                    {% if product.badge %}<span class="badge badge-gold">{{ product.badge }}</span>{% else %}<span></span>{% endif %}
+                    {% if product.has_discount %}<span class="badge badge-accent">Save {{ product.discount_percent }}%</span>{% endif %}
+                </div>
+            </div>
+
+            <div class="pd-info" data-reveal style="--d:.1s">
+
+                <div style="display:grid;gap:14px">
+                    <span class="eyebrow">{{ product.category.name }}</span>
+                    <h1 class="display">{{ product.name }}</h1>
+                    <div class="pd-meta">
+                        <span><i class="fa-solid fa-star"></i>{{ product.rating }} · {{ product.review_count }} reviews</span>
+                        {% if product.sold_label %}<span><i class="fa-solid fa-fire"></i>{{ product.sold_label }} sold</span>{% endif %}
+                        <span><i class="fa-solid fa-clock"></i>Ready in 15–20 min</span>
+                    </div>
+                </div>
+
+                <p class="lead">{{ product.description }}</p>
+
+                <div class="pd-price">
+                    <strong>Rs. {{ product.price|intcomma }}</strong>
+                    {% if product.has_discount %}<del>Rs. {{ product.old_price|intcomma }}</del><span class="badge badge-accent">−{{ product.discount_percent }}%</span>{% endif %}
+                </div>
+
+                {% if product.ingredient_list %}
+                <div>
+                    <p class="label-sm">What's inside</p>
+                    <ul class="ingredients">
+                        {% for ingredient in product.ingredient_list %}<li>{{ ingredient }}</li>{% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <div class="buy-row">
+                    <div class="qty" data-qty>
+                        <button type="button" data-qty-step="-1" aria-label="Decrease quantity"><i class="fa-solid fa-minus"></i></button>
+                        <input type="number" id="pdQty" data-qty-value value="1" min="1" max="20" aria-label="Quantity" readonly>
+                        <button type="button" data-qty-step="1" aria-label="Increase quantity"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                    <button type="button" class="btn btn-primary" data-add="{{ product.slug }}" data-qty-source="#pdQty">
+                        <i class="fa-solid fa-bag-shopping"></i> <span data-label>Add to cart</span>
+                    </button>
+                </div>
+
+                {% if in_cart %}
+                <p class="muted" style="font-size:14px"><i class="fa-solid fa-circle-check" style="color:var(--success)"></i> You already have {{ in_cart }} in your cart · <a href="{% url 'cart' %}" style="color:var(--accent-2);font-weight:700">View cart</a></p>
+                {% endif %}
+
+                <div class="assurances">
+                    <div><i class="fa-solid fa-leaf"></i>Fresh daily<span>Never frozen</span></div>
+                    <div><i class="fa-solid fa-truck-fast"></i>{{ site.delivery_time }} delivery<span>Free over Rs. 1,500</span></div>
+                    <div><i class="fa-solid fa-money-bill-wave"></i>Cash on delivery<span>Pay at your door</span></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{% if product_reviews %}
+<section class="section-tight">
+    <div class="container">
+        <div class="section-head" data-reveal>
+            <div>
+                <span class="eyebrow">Reviews</span>
+                <h2 class="h2">People who <em>tried it.</em></h2>
+            </div>
+            <a href="{% url 'reviews' %}" class="link-arrow">Write a review <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="review-grid">
+            {% for review in product_reviews %}{% include "partials/review_card.html" %}{% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+
+{% if related %}
+<section class="section section-alt">
+    <div class="container">
+        <div class="section-head" data-reveal>
+            <div>
+                <span class="eyebrow">More {{ product.category.name }}</span>
+                <h2 class="h2">You might also <em>like.</em></h2>
+            </div>
+            <a href="{% url 'menu' %}?category={{ product.category.slug }}" class="link-arrow">See all <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="product-grid">
+            {% for product in related %}{% include "partials/product_card.html" with reveal=True %}{% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}

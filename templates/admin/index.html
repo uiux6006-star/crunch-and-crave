@@ -1,0 +1,215 @@
+{% extends "admin/index.html" %}
+{% load dashboard humanize log admin_filters %}
+
+{% block coltype %}colM{% endblock %}
+
+{% block content_title %}{% endblock %}
+
+{% block content %}
+{% dashboard_stats as stats %}
+
+<div class="nja-dash">
+
+    <!-- ================= GREETING ================= -->
+    <section class="nja-hello nja-in">
+        <div>
+            <p class="nja-eyebrow"><span class="nja-live"></span> Live dashboard · {% now "l, d M Y" %}</p>
+            <h1><span data-greeting>Welcome back</span>, <em>{% firstof user.get_short_name user.get_username %}</em></h1>
+            <p class="nja-sub">Here's how Crunch &amp; Crave is doing right now.</p>
+        </div>
+        <div class="nja-hello-actions">
+            <a class="nja-btn nja-btn-ghost" href="{% url 'admin:core_product_add' %}"><i class="fa-solid fa-plus"></i> New product</a>
+            <a class="nja-btn" href="{% url 'admin:core_order_changelist' %}"><i class="fa-solid fa-bell"></i> Active orders <b data-active-orders{% if not stats.active_orders %} hidden{% endif %}>{{ stats.active_orders }}</b></a>
+        </div>
+    </section>
+
+
+    <!-- ================= KPI CARDS ================= -->
+    <section class="nja-kpis">
+        <a class="nja-kpi nja-in" style="--i:1" href="{% url 'admin:core_order_changelist' %}">
+            <span class="nja-kpi-icon k-violet"><i class="fa-solid fa-sack-dollar"></i></span>
+            <span class="nja-kpi-label">Total revenue</span>
+            <strong>Rs. <span data-count="{{ stats.revenue }}">{{ stats.revenue|intcomma }}</span></strong>
+            <span class="nja-kpi-foot">{{ stats.order_count }} completed & open orders</span>
+        </a>
+        <a class="nja-kpi nja-in" style="--i:2" href="{% url 'admin:core_order_changelist' %}">
+            <span class="nja-kpi-icon k-cyan"><i class="fa-solid fa-calendar-day"></i></span>
+            <span class="nja-kpi-label">Today</span>
+            <strong>Rs. <span data-count="{{ stats.today_revenue }}">{{ stats.today_revenue|intcomma }}</span></strong>
+            <span class="nja-kpi-foot">{{ stats.today_orders }} order{{ stats.today_orders|pluralize }} today</span>
+        </a>
+        <a class="nja-kpi nja-in" style="--i:3" href="{% url 'admin:core_order_changelist' %}">
+            <span class="nja-kpi-icon k-amber"><i class="fa-solid fa-fire-burner"></i></span>
+            <span class="nja-kpi-label">Active orders</span>
+            <strong><span data-count="{{ stats.active_orders }}">{{ stats.active_orders }}</span></strong>
+            <span class="nja-kpi-foot">Placed → on the way</span>
+        </a>
+        <a class="nja-kpi nja-in" style="--i:4" href="{% url 'admin:core_order_changelist' %}">
+            <span class="nja-kpi-icon k-pink"><i class="fa-solid fa-receipt"></i></span>
+            <span class="nja-kpi-label">Avg. order value</span>
+            <strong>Rs. <span data-count="{{ stats.average }}">{{ stats.average|intcomma }}</span></strong>
+            <span class="nja-kpi-foot">Across all orders</span>
+        </a>
+    </section>
+
+
+    <!-- ================= CHART + STATUS ================= -->
+    <section class="nja-grid nja-grid-2">
+
+        <div class="nja-card nja-in" style="--i:5">
+            <header class="nja-card-head">
+                <div>
+                    <h2>Revenue · last 7 days</h2>
+                    <p>Rs. {{ stats.week_revenue|intcomma }} this week</p>
+                </div>
+                <span class="nja-chip">7D</span>
+            </header>
+            <div class="nja-bars" role="img" aria-label="Revenue per day for the last 7 days">
+                {% for day in stats.week %}
+                <div class="nja-bar{% if day.is_today %} is-today{% endif %}" title="{{ day.date|date:'D d M' }} — Rs. {{ day.revenue|intcomma }}">
+                    <span class="nja-bar-value">{% if day.revenue %}{{ day.revenue|intcomma }}{% endif %}</span>
+                    <div class="nja-bar-track"><div class="nja-bar-fill" style="--h: {{ day.percent }}%; --i: {{ forloop.counter }}"></div></div>
+                    <span class="nja-bar-label">{{ day.label }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="nja-card nja-in" style="--i:6">
+            <header class="nja-card-head">
+                <div><h2>Order pipeline</h2><p>Every order by status</p></div>
+            </header>
+            <ul class="nja-status-list">
+                {% for s in stats.statuses %}
+                <li>
+                    <a href="{% url 'admin:core_order_changelist' %}?status__exact={{ s.value }}">
+                        <span class="nja-dot s-{{ s.value }}"></span>
+                        <span class="nja-status-name">{{ s.label }}</span>
+                        <span class="nja-status-count">{{ s.count }}</span>
+                    </a>
+                    <div class="nja-meter"><div class="s-{{ s.value }}" style="--w: {{ s.percent }}%"></div></div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+    </section>
+
+
+    <!-- ================= RECENT ORDERS + TOP ITEMS ================= -->
+    <section class="nja-grid nja-grid-2">
+
+        <div class="nja-card nja-in" style="--i:7">
+            <header class="nja-card-head">
+                <div><h2>Recent orders</h2><p>Latest activity from the website</p></div>
+                <a class="nja-link" href="{% url 'admin:core_order_changelist' %}">View all <i class="fa-solid fa-arrow-right"></i></a>
+            </header>
+            {% if stats.recent_orders %}
+            <div class="nja-orders">
+                {% for order in stats.recent_orders %}
+                <a class="nja-order" href="{% url 'admin:core_order_change' order.pk %}" style="--i: {{ forloop.counter }}">
+                    <span class="nja-avatar">{{ order.full_name|slice:":1"|upper }}</span>
+                    <span class="nja-order-main">
+                        <strong>{{ order.full_name }}</strong>
+                        <small>#{{ order.order_number }} · {{ order.city }} · {{ order.created_at|naturaltime }}</small>
+                    </span>
+                    <span class="nja-pill s-{{ order.status }}">{{ order.get_status_display }}</span>
+                    <span class="nja-order-total">Rs. {{ order.total|intcomma }}</span>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="nja-empty">
+                <i class="fa-solid fa-mug-hot"></i>
+                <p>No orders yet. They'll appear here the moment a customer checks out.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="nja-card nja-in" style="--i:8">
+            <header class="nja-card-head">
+                <div><h2>Best sellers</h2><p>By quantity sold</p></div>
+                <a class="nja-link" href="{% url 'admin:core_product_changelist' %}">Menu <i class="fa-solid fa-arrow-right"></i></a>
+            </header>
+            {% if stats.top_products %}
+            <ol class="nja-top">
+                {% for item in stats.top_products %}
+                <li>
+                    <span class="nja-rank">{{ forloop.counter }}</span>
+                    <div>
+                        <div class="nja-top-row"><strong>{{ item.product_name }}</strong><span>{{ item.sold }} sold · Rs. {{ item.revenue|intcomma }}</span></div>
+                        <div class="nja-meter"><div class="s-top" style="--w: {{ item.percent }}%"></div></div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ol>
+            {% else %}
+            <div class="nja-empty">
+                <i class="fa-solid fa-trophy"></i>
+                <p>Your best sellers will be ranked here once orders come in.</p>
+            </div>
+            {% endif %}
+        </div>
+
+    </section>
+
+
+    <!-- ================= QUICK TILES ================= -->
+    <section class="nja-tiles">
+        <a class="nja-tile nja-in" style="--i:9" href="{% url 'admin:core_product_changelist' %}">
+            <i class="fa-solid fa-burger t-violet"></i>
+            <strong>{{ stats.products_live }}<small>/{{ stats.products_total }}</small></strong>
+            <span>Products live</span>
+        </a>
+        <a class="nja-tile nja-in" style="--i:10" href="{% url 'admin:core_review_changelist' %}?is_approved__exact=0">
+            <i class="fa-solid fa-star t-amber"></i>
+            <strong>{{ stats.pending_reviews }}</strong>
+            <span>Reviews to approve</span>
+        </a>
+        <a class="nja-tile nja-in" style="--i:11" href="{% url 'admin:core_contactmessage_changelist' %}?is_read__exact=0">
+            <i class="fa-solid fa-envelope t-cyan"></i>
+            <strong>{{ stats.unread_messages }}</strong>
+            <span>Unread messages</span>
+        </a>
+        <a class="nja-tile nja-in" style="--i:12" href="{% url 'admin:core_promocode_changelist' %}">
+            <i class="fa-solid fa-ticket t-pink"></i>
+            <strong><i class="fa-solid fa-arrow-right" style="font-size:.6em"></i></strong>
+            <span>Promo codes</span>
+        </a>
+    </section>
+
+
+    <!-- ================= APPS + RECENT ACTIONS ================= -->
+    <section class="nja-grid nja-grid-apps">
+        <div class="nja-in" style="--i:13">
+            <h2 class="nja-section-title">Manage</h2>
+            <div id="content-main" class="app-list">
+                {% include "admin/app_list.html" with app_list=app_list show_changelinks=True %}
+            </div>
+        </div>
+
+        <div class="nja-card nja-in" style="--i:14">
+            <header class="nja-card-head"><div><h2>My recent actions</h2><p>Changes you made in admin</p></div></header>
+            {% get_admin_log 8 as admin_log for_user user %}
+            {% if admin_log %}
+            <ul class="nja-log">
+                {% for entry in admin_log %}
+                <li class="{% if entry.is_addition %}is-add{% elif entry.is_change %}is-change{% else %}is-delete{% endif %}">
+                    <span class="nja-log-icon"><i class="fa-solid {% if entry.is_addition %}fa-plus{% elif entry.is_change %}fa-pen{% else %}fa-trash{% endif %}"></i></span>
+                    <div>
+                        {% if entry.is_deletion or not entry.get_admin_url %}{{ entry.object_repr|to_object_display_value }}{% else %}<a href="{{ entry.get_admin_url }}">{{ entry.object_repr|to_object_display_value }}</a>{% endif %}
+                        <small>{% if entry.content_type %}{{ entry.content_type.name|capfirst }}{% endif %} · {{ entry.action_time|naturaltime }}</small>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <div class="nja-empty"><i class="fa-solid fa-clock-rotate-left"></i><p>Nothing yet — your edits will show up here.</p></div>
+            {% endif %}
+        </div>
+    </section>
+
+</div>
+{% endblock %}
+
+{% block sidebar %}{% endblock %}
