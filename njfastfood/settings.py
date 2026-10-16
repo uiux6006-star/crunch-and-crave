@@ -55,6 +55,11 @@ ALLOWED_HOSTS = [
     if host.strip()
 ]
 
+# Render.com tells the app its public address in this variable.
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
 # Required for forms over HTTPS, e.g. https://yourname.pythonanywhere.com
 CSRF_TRUSTED_ORIGINS = [
     f"https://{host}" for host in ALLOWED_HOSTS if host not in ("localhost", "127.0.0.1")
@@ -88,6 +93,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -126,7 +132,7 @@ WSGI_APPLICATION = 'njfastfood.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': os.environ.get('DJANGO_SQLITE_PATH', BASE_DIR / 'db.sqlite3'),
     }
 }
 
@@ -173,9 +179,25 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+# WhiteNoise serves CSS/JS/images itself, compressed and cache-busted in production.
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {
+        "BACKEND": (
+            "django.contrib.staticfiles.storage.StaticFilesStorage"
+            if DEBUG
+            else "whitenoise.storage.CompressedManifestStaticFilesStorage"
+        ),
+    },
+}
+
 # Photos uploaded from the admin (products, categories)
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / "media"
+
+# Hosts without a separate web server for /media/ (e.g. Render) let Django serve
+# uploads. Fine for a portfolio demo; a busy shop should use cloud storage instead.
+SERVE_MEDIA = os.environ.get('DJANGO_SERVE_MEDIA', '0') == '1'
 
 
 # Email — new-order alerts and customer confirmations.

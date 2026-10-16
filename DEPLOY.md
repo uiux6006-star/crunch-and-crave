@@ -1,4 +1,39 @@
-# Crunch & Crave — PythonAnywhere par deploy
+# Crunch & Crave — Deploy guide
+
+Do raaste hain:
+- **A. Render.com** (free, sab se aasaan — code GitHub se khud aata hai)
+- **B. PythonAnywhere** (free, lekin ek account par sirf ek web app)
+
+---
+
+# A. Render.com par deploy
+
+Code GitHub par pehle se hai: https://github.com/uiux6006-star/crunch-and-crave
+Project mein `render.yaml` hai, is liye Render saari settings khud parh leta hai.
+
+1. https://render.com par jayein → **Get Started** → **GitHub se sign up** karein.
+2. Dashboard mein **New +** → **Blueprint** chunein.
+3. GitHub repo **crunch-and-crave** ko **Connect** karein. (Agar list mein na dikhe to "Configure GitHub" se is repo ko access dein.)
+4. Render do cheezein poochega — admin panel ka login:
+   - `DJANGO_ADMIN_USERNAME` → jaise `admin`
+   - `DJANGO_ADMIN_PASSWORD` → ek mazboot password
+5. **Apply** / **Deploy Blueprint** dabayein. Pehla build 3–6 minute leta hai.
+6. Jab status **Live** ho jaye, upar diya gaya link kholein, jaise:
+   `https://crunch-and-crave.onrender.com`
+   Admin: `https://crunch-and-crave.onrender.com/admin/`
+
+**Code update karna:** apne computer par `git push` karein — Render khud naya version deploy kar deta hai.
+
+**Free plan ki baatein:**
+- 15 minute koi visitor na aaye to site so jati hai; agli dafa khulne mein ~30–50 second lagte hain.
+- Har deploy/restart par database dobara banta hai: menu, promo codes aur admin user khud wapas aa jate hain, lekin demo orders, reviews aur upload ki hui photos mit jati hain.
+
+**Agar deploy fail ho:** service kholein → **Logs**. Sab se neeche asli error hota hai.
+Agar Python version ka error ho, to **Environment** tab mein `PYTHON_VERSION` ko `3.12.8` kar ke **Manual Deploy** dabayein.
+
+---
+
+# B. PythonAnywhere par deploy
 
 Ye guide website ko **free** mein live karti hai, is address par:
 `https://AAPKA-USERNAME.pythonanywhere.com`
@@ -169,7 +204,9 @@ Aakhir mein **Web** tab → **Reload** dabayein.
 | Page bina design ke (CSS nahi) | Step 5 ka `collectstatic` chalayein, aur Step 6.5 ki `/static/` mapping check karein. Phir **Reload**. |
 | Upload ki hui photo nahi dikhti | Step 6.5 ki `/media/` mapping check karein. |
 
-**Free plan ki zaroori baat:** har 3 mahine mein **Web** tab par **"Run until 3 months from today"** dabana parta hai, warna site band ho jati hai. PythonAnywhere iski yaad-dihani email bhejta hai.
+**Free plan ki zaroori baatein:**
+- Har **1 mahine** mein login karke **Web** tab par **"Run until 1 month from today"** dabana parta hai, warna site band ho jati hai. PythonAnywhere ek hafta pehle yaad-dihani email bhejta hai.
+- Free account par sirf **ek** web app chal sakti hai. Agar account par pehle se koi web app hai, to naya app nahi ban sakta; ya usi app ki settings badalni hongi (purani site band ho jayegi), ya kisi aur host par deploy karna hoga.
 
 ---
 

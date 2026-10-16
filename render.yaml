@@ -1,0 +1,25 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: crunch-and-crave
+    runtime: python
+    plan: free
+    buildCommand: bash build.sh
+    startCommand: bash start.sh
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.5
+      - key: DJANGO_DEBUG
+        value: "0"
+      - key: DJANGO_SECRET_KEY
+        generateValue: true          # Render creates a random key
+      - key: DJANGO_DEMO_MODE
+        value: "1"                   # "Portfolio demo" banner
+      - key: DJANGO_SERVE_MEDIA
+        value: "1"
+      - key: WEB_CONCURRENCY
+        value: "2"
+      - key: DJANGO_ADMIN_USERNAME
+        sync: false                  # you type it in when creating the service
+      - key: DJANGO_ADMIN_PASSWORD
+        sync: false

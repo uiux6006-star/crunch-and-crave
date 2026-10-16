@@ -544,3 +544,29 @@ class DemoAndProductionTests(NJTestCase):
         from django.template.loader import render_to_string
         html = render_to_string("500.html")
         self.assertIn("slipped up", html)
+
+
+class EnsureAdminCommandTests(NJTestCase):
+
+    def run_command(self, **env):
+        import os
+        from io import StringIO
+        from unittest import mock
+        from django.core.management import call_command
+        out = StringIO()
+        with mock.patch.dict(os.environ, env, clear=False):
+            call_command("ensure_admin", stdout=out)
+        return out.getvalue()
+
+    def test_creates_then_updates_admin(self):
+        from django.contrib.auth.models import User
+        self.assertIn("created", self.run_command(DJANGO_ADMIN_USERNAME="chef", DJANGO_ADMIN_PASSWORD="first-pass-1"))
+        self.assertIn("updated", self.run_command(DJANGO_ADMIN_USERNAME="chef", DJANGO_ADMIN_PASSWORD="second-pass-2"))
+        user = User.objects.get(username="chef")
+        self.assertTrue(user.is_superuser and user.is_staff)
+        self.assertTrue(user.check_password("second-pass-2"))
+
+    def test_skips_without_env(self):
+        from django.contrib.auth.models import User
+        self.assertIn("skipping", self.run_command(DJANGO_ADMIN_USERNAME="", DJANGO_ADMIN_PASSWORD=""))
+        self.assertFalse(User.objects.exists())
